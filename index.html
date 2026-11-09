@@ -52,6 +52,7 @@
     }
     .foot { text-align:center; color:#94a3b8; font-size:11px; margin-top:20px; }
   </style>
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
   <main class="panel">
@@ -104,6 +105,17 @@
         { enableHighAccuracy:true, timeout:15000, maximumAge:0 }
       );
     }
+liff.init({ liffId: "2012484154-s71MUZGS" })
+  .then(() => {
+    const result = document.getElementById("result");
+    result.textContent = liff.isInClient()
+      ? "LINE MINI App 連線成功"
+      : "網頁已載入，請從 LINE MINI App 開啟測試";
+  })
+  .catch((error) => {
+    document.getElementById("result").textContent =
+      "LIFF 初始化失敗：" + error.message;
+  });
   </script>
 </body>
 </html>
