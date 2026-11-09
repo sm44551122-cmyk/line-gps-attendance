@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KSP 員工 GPS 打卡系統</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(145deg,#102b46,#176b78);
+      color: #173047;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 22px;
+    }
+    .panel {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 25px;
+      padding: 28px 23px;
+      box-shadow: 0 18px 50px #00182755;
+    }
+    .brand { color:#167b83; font-weight:bold; letter-spacing:2px; }
+    h1 { font-size:25px; margin:12px 0 5px; }
+    .sub { color:#718096; font-size:13px; }
+    .status {
+      background:#f0f6f8;
+      border-radius:15px;
+      padding:17px;
+      margin:22px 0;
+    }
+    .status strong { display:block; margin-bottom:8px; }
+    #gps { color:#718096; font-size:14px; line-height:1.7; }
+    .buttons { display:grid; gap:12px; }
+    button {
+      border:0; border-radius:13px; padding:16px;
+      color:white; font-size:17px; font-weight:bold;
+      cursor:pointer;
+    }
+    button:disabled { opacity:.5; cursor:not-allowed; }
+    .in { background:#087f70; }
+    .out { background:#234e78; }
+    #result {
+      min-height:24px; margin-top:18px;
+      text-align:center; font-size:14px; color:#087f70;
+    }
+    .foot { text-align:center; color:#94a3b8; font-size:11px; margin-top:20px; }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <div class="brand">KSP · ATTENDANCE</div>
+    <h1>員工出勤打卡</h1>
+    <div class="sub">GPS 定位簽到系統</div>
+
+    <section class="status">
+      <strong>📍 目前定位狀態</strong>
+      <div id="gps">尚未取得 GPS 定位，請點擊下方按鈕。</div>
+    </section>
+
+    <div class="buttons">
+      <button class="in" onclick="clock('上班')">上班打卡</button>
+      <button class="out" onclick="clock('下班')">下班打卡</button>
+    </div>
+
+    <div id="result"></div>
+    <div class="foot">KSP Employee Attendance System</div>
+  </main>
+
+  <script>
+    let currentPosition = null;
+
+    function clock(type) {
+      const gps = document.getElementById('gps');
+      const result = document.getElementById('result');
+
+      result.textContent = '正在取得 GPS 定位...';
+
+      if (!navigator.geolocation) {
+        result.textContent = '此裝置不支援 GPS 定位';
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          currentPosition = position.coords;
+          gps.innerHTML =
+            '定位成功 ✓<br>緯度：' + currentPosition.latitude.toFixed(6) +
+            '<br>經度：' + currentPosition.longitude.toFixed(6) +
+            '<br>精確度：約 ' + Math.round(currentPosition.accuracy) + ' 公尺';
+
+          result.textContent =
+            type + '定位測試成功！目前僅測試 GPS，尚未正式記錄打卡。';
+        },
+        error => {
+          result.textContent = '定位失敗，請允許瀏覽器使用位置資訊。';
+        },
+        { enableHighAccuracy:true, timeout:15000, maximumAge:0 }
+      );
+    }
+  </script>
+</body>
+</html>
